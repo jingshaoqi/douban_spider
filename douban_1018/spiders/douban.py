@@ -27,7 +27,7 @@ class DoubanSpider(scrapy.Spider):
         # print 'captcha_url2:', captcha_url2
 
         if len(captcha_url):
-            captcha = self.regonize_captcha(captcha_url[0])
+            captcha = self.regonize_captcha_by_hand(captcha_url[0])
             formdata['captcha-solution'] = captcha
             captcha_id = response.xpath("//input[@name='captcha-id']/@value").get()
             print 'captcha_id:',captcha_id
@@ -46,9 +46,29 @@ class DoubanSpider(scrapy.Spider):
         print 'response.url:',response.url
         user_name = response.xpath("//li[@class='nav-user-account']/a/span/text()").get()
         print 'user_name:',user_name
+        #个人主页url:
+        people_index_url = response.xpath("//div[@class='more-items']//tr[1]/td/a/@href").extract()[0]
+        print 'people_index_url:',people_index_url
 
+        yield scrapy.Request(people_index_url, callback=self.parse_people_index)
 
-    # 借助阿里云市场的图形验证码识别进行输入
+    # 登录个人主页,对个人主页进行操作
+    def parse_people_index(self, response):
+        print '----登录个人主页-------'
+        print '个人主页url:',response.url
+        edit_url = response.xpath("//form[@name='edit_sign']/@action").extract()[0]
+        edit_url_full = 'https://www.douban.com'+ edit_url
+        print 'edit_url:',edit_url
+        ck = response.xpath("//input[@name='ck']/@value").extract()[0]
+        formdata = {'ck':ck,
+                    'signature':'我是最美的花朵'}
+        yield scrapy.FormRequest(edit_url_full, formdata=formdata, callback=self.parse_edit_none)
+
+    # 避免二次请求parse处理
+    def parse_edit_none(self, response):
+        pass
+
+    # 借助阿里云市场的图形验证码识别自动进行输入
     # 该接口的网址:https://market.aliyun.com/products/57124001/cmapi028447.html
     def regonize_captcha(self, image_url):
         urllib.urlretrieve(image_url, 'captcha2.png')
