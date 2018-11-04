@@ -17,7 +17,7 @@ class DoubanSpider(scrapy.Spider):
         formdata = {'source':'index_nav',
                     'redir': 'https://www.douban.com/',
                     'form_email':'strong0528@aliyun.com',
-                    'form_password':'307xiaoqiang608',
+                    'form_password':'xxxxxxxxx',
                     'remember':'on',
                     'user_login':'登录'
                     }
