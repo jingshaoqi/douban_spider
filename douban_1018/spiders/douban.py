@@ -27,7 +27,7 @@ class DoubanSpider(scrapy.Spider):
         # print 'captcha_url2:', captcha_url2
 
         if len(captcha_url):
-            captcha = self.regonize_captcha_by_hand(captcha_url[0])
+            captcha = self.regonize_captcha(captcha_url[0])
             formdata['captcha-solution'] = captcha
             captcha_id = response.xpath("//input[@name='captcha-id']/@value").get()
             print 'captcha_id:',captcha_id
