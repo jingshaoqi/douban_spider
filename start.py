@@ -1,2 +1,2 @@
 from scrapy import cmdline
-cmdline.execute("scrapy crawl douban".splitwi())
+cmdline.execute("scrapy crawl douban".split(' '))
